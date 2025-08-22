@@ -1,48 +1,38 @@
-// import Contact from "../db/models/Contact.js";
-
+import { SORT_ORDER } from "../constants/index.js";
 import Contact from "../db/models/Contact.js";
+import { calculatePaginationData } from "../utils/calculatePaginationParams.js";
 
-// export const getAllContacts = async (req, res) => {
-//   try {
-//     const contacts = await Contact.find().sort({ createdAt: -1 });
-//     res.status(200).json({
-//       success: true,
-//       message: "Successfully found contacts!",
-//       data: contacts,
-//     });
-//   } catch (error) {
-//     return res.status(500).json({
-//       success: false,
-//       message: "Server error",
-//     });
-//   }
+// export const getAllContacts = async () => {
+//   return Contact.find().sort({ createdAt: -1 });
 // };
 
-// export const getContactById = async (req, res) => {
-//   try {
-//     const contactId = req.params.id;
-//     const contact = await Contact.findById(contactId);
-//     if (!contact) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Contact not found",
-//       });
-//     }
-//     res.status(200).json({
-//       success: true,
-//       message: `Successfully found contact with id ${contactId}!`,
-//       data: contact,
-//     });
-//   } catch (error) {
-//     return res.status(500).json({
-//       success: false,x
-//       message: "Server error",
-//     });
-//   }
-// };
+export const getAllContacts = async ({
+  page = 1,
+  perPage = 10,
+  sortOrder = SORT_ORDER.ASC,
+  sortBy = "_id",
+  filter = {},
+}) => {
+  const limit = perPage;
+  const skip = (page - 1) * perPage;
 
-export const getAllContacts = async () => {
-  return Contact.find().sort({ createdAt: -1 });
+  const contactsQuery = Contact.find(filter);
+  const contactsCount = await Contact.find(filter)
+    .merge(contactsQuery)
+    .countDocuments();
+
+  const contacts = await contactsQuery
+    .limit(limit)
+    .skip(skip)
+    .sort({ [sortBy]: sortOrder })
+    .exec();
+
+  const paginationData = calculatePaginationData(contactsCount, page, perPage);
+
+  return {
+    data: contacts,
+    ...paginationData,
+  };
 };
 
 export const getContactById = async (id) => {

@@ -33,6 +33,7 @@ const setupServer = () => {
     });
   });
 
+  //
   // app.get("/contacts", getAllContacts);
   // app.get("/contacts/:id", getContactById);
 
