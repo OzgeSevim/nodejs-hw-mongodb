@@ -13,6 +13,7 @@ import { parseFilterParams } from "../utils/parseFilterParams.js";
 export const getAllContactsController = async (req, res) => {
   try {
     // const contacts = await getAllContacts();
+    console.log(" query params:", req.query);
 
     const { page, perPage } = parsePaginationParams(req.query);
     const { sortOrder, sortBy } = parseSortParams(req.query);
@@ -31,6 +32,7 @@ export const getAllContactsController = async (req, res) => {
       data: contacts,
     });
   } catch (error) {
+    console.error("getAllContactsController error:", error);
     console.error(error);
     res.status(500).json({
       status: 500,
