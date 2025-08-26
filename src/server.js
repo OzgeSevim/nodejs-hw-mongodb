@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { notFoundHandler } from "./middlewares/notFoundHandler.js";
 import contactRoutes from "./routes/contacts.js";
+import authRoutes from "./routes/auth.js";
+import cookieParser from "cookie-parser";
 // import { getAllContacts, getContactById } from "./services/contacts.js";
 
 const setupServer = () => {
@@ -15,6 +17,7 @@ const setupServer = () => {
 
   app.use(cors());
   app.use(express.json());
+  app.use(cookieParser());
   app.use(
     pino({
       transport: {
@@ -43,6 +46,7 @@ const setupServer = () => {
   //   });
   // });
   app.use("/contacts", contactRoutes);
+  app.use("/auth", authRoutes);
 
   app.use(errorHandler);
   app.use("*", notFoundHandler);
