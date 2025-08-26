@@ -45,8 +45,9 @@ const setupServer = () => {
   //     message: "Not found",
   //   });
   // });
-  app.use("/contacts", contactRoutes);
   app.use("/auth", authRoutes);
+
+  app.use("/contacts", contactRoutes);
 
   app.use(errorHandler);
   app.use("*", notFoundHandler);
