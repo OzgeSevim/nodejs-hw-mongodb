@@ -7,24 +7,26 @@ import { notFoundHandler } from "./middlewares/notFoundHandler.js";
 import contactRoutes from "./routes/contacts.js";
 import authRoutes from "./routes/auth.js";
 import cookieParser from "cookie-parser";
+import { UPLOAD_DIR } from "./constants/index.js";
 // import { getAllContacts, getContactById } from "./services/contacts.js";
 
 const setupServer = () => {
   dotenv.config();
 
   const app = express();
+
   const PORT = Number(process.env.PORT);
 
   app.use(cors());
   app.use(express.json());
   app.use(cookieParser());
-  app.use(
-    pino({
-      transport: {
-        target: "pino-pretty",
-      },
-    }),
-  );
+  // app.use(
+  //   pino({
+  //     transport: {
+  //       target: "pino-pretty",
+  //     },
+  //   }),
+  // );
 
   app.get("/", (req, res) => {
     res.json({
@@ -45,9 +47,10 @@ const setupServer = () => {
   //     message: "Not found",
   //   });
   // });
-  app.use("/auth", authRoutes);
 
   app.use("/contacts", contactRoutes);
+  app.use("/auth", authRoutes);
+  app.use("/upload", express.static(UPLOAD_DIR));
 
   app.use(errorHandler);
   app.use("*", notFoundHandler);

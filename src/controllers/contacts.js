@@ -9,6 +9,10 @@ import {
 import { parsePaginationParams } from "../utils/parsePaginationParams.js";
 import { parseSortParams } from "../utils/parseSortParams.js";
 import { parseFilterParams } from "../utils/parseFilterParams.js";
+import { env } from "../utils/env.js";
+import saveFileToCloudinary from "../utils/saveFileToCloudinary.js";
+import saveFileToUploadDir from "../utils/saveFileToUploadDir.js";
+import { CLOUDINARY } from "../constants/index.js";
 
 export const getAllContactsController = async (req, res) => {
   try {
@@ -149,5 +153,37 @@ export const deleteContactController = async (req, res) => {
       status: 500,
       message: "Server Error",
     });
+  }
+};
+
+export const uploadContactPhotoController = async (req, res, next) => {
+  try {
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({
+        success: false,
+        message: "Dosya yüklenemedi",
+      });
+    }
+
+    let photoUrl;
+    const enableCloudinary = env(CLOUDINARY.ENABLE_CLOUDINARY);
+
+    if (enableCloudinary === "true") {
+      photoUrl = await saveFileToCloudinary(file);
+    } else {
+      const fileName = await saveFileToUploadDir(file);
+      photoUrl = `/uploads/${fileName}`;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Resim yüklendi",
+      data: {
+        photoUrl,
+      },
+    });
+  } catch (error) {
+    next(error);
   }
 };
