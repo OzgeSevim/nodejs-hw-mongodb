@@ -1,0 +1,40 @@
+type: object
+required:
+  - id
+  - name
+  - phoneNumber
+  - email
+  - contactType
+properties:
+  id:
+    type: string
+    format: uuid
+    example: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+  name:
+    type: string
+    example: "John Doe"
+  phoneNumber:
+    type: string
+    example: "+1234567890"
+  email:
+    type: string
+    format: email
+    example: "johndoe@example.com"
+  isFavourite:
+    type: boolean
+    example: true
+  contactType:
+    type: string
+    enum:
+      - work
+      - home
+      - personal
+    example: personal
+  createdAt:
+    type: string
+    format: date-time
+    example: "2024-01-01T12:00:00Z"
+  updatedAt:
+    type: string
+    format: date-time
+    example: "2024-01-15T12:00:00Z"

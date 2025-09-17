@@ -8,6 +8,7 @@ import contactRoutes from "./routes/contacts.js";
 import authRoutes from "./routes/auth.js";
 import cookieParser from "cookie-parser";
 import { UPLOAD_DIR } from "./constants/index.js";
+import { swaggerDocs } from "./middlewares/swaggerDocs.js";
 // import { getAllContacts, getContactById } from "./services/contacts.js";
 
 const setupServer = () => {
@@ -51,6 +52,7 @@ const setupServer = () => {
   app.use("/contacts", contactRoutes);
   app.use("/auth", authRoutes);
   app.use("/upload", express.static(UPLOAD_DIR));
+  app.use("/api-docs", swaggerDocs());
 
   app.use(errorHandler);
   app.use("*", notFoundHandler);
