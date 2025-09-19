@@ -15,11 +15,11 @@ const sessionSchema = new mongoose.Schema({
     required: true,
   },
   accessTokenValidUntil: {
-    type: String,
+    type: Date,
     required: true,
   },
   refreshTokenValidUntil: {
-    type: String,
+    type: Date,
     required: true,
   },
 });

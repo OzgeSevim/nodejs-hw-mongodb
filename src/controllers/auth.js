@@ -27,6 +27,8 @@ export const registerUserController = async (req, res) => {
 };
 
 const setupSession = async (res, session) => {
+  console.log("Setup session data:", session);
+
   res.cookie("refreshToken", session.refreshToken, {
     httpOnly: true,
     expires: new Date(Date.now() + THIRTY_DAY),
@@ -37,9 +39,32 @@ const setupSession = async (res, session) => {
   });
 };
 
+// export const loginUserController = async (req, res) => {
+//   try {
+//     const session = await loginUser(req.body);
+//     setupSession(res, session);
+
+//     res.status(200).json({
+//       status: 200,
+//       message: "Successfully logged in an user!",
+//       data: {
+//         accessToken: session.accessToken,
+//       },
+//     });
+//   } catch (error) {
+//     res.status(error.status || 500).json({
+//       success: false,
+//       message: "Sunucu hatası",
+//       error: error.message,
+//     });
+//   }
+// };
+
 export const loginUserController = async (req, res) => {
   try {
     const session = await loginUser(req.body);
+    console.log("Session in controller:", session);
+
     setupSession(res, session);
 
     res.status(200).json({

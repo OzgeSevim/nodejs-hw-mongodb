@@ -17,6 +17,9 @@ import {
 import { authenticate } from "../middlewares/authenticate.js";
 import upload from "../middlewares/multer.js";
 
+import multer from "multer";
+const uploads = multer();
+
 const router = express.Router();
 
 router.use(authenticate);
@@ -27,6 +30,7 @@ router.get("/:contactId", isValidId, ctrlWrapper(getContactByIdController));
 
 router.post(
   "/",
+  upload.none(),
   validateBody(createContactSchema),
   ctrlWrapper(createContactController),
 );

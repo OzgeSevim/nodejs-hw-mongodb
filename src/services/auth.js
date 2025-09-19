@@ -2,6 +2,7 @@ import createHttpError from "http-errors";
 import User from "../db/models/User.js";
 import bcrypt from "bcrypt";
 import { randomBytes } from "crypto";
+
 import {
   FIFTEEN_MINUTES,
   THIRTY_DAY,
@@ -36,6 +37,8 @@ export const createSession = () => {
   const accessTokenValidUntil = new Date(Date.now() + FIFTEEN_MINUTES);
   const refreshTokenValidUntil = new Date(Date.now() + THIRTY_DAY);
 
+  console.log("Generated tokens:", { accessToken, refreshToken });
+
   return {
     accessToken,
     refreshToken,
@@ -44,23 +47,50 @@ export const createSession = () => {
   };
 };
 
+// export const loginUser = async (payload) => {
+//   const user = await User.findOne({ email: payload.email });
+
+//   if (!user) return createHttpError(404, "User not found");
+
+//   const isEqual = await bcrypt.compare(payload.password, user.password);
+
+//   if (!isEqual) return createHttpError(401, "Unauthorized");
+
+//   await Session.deleteOne({ userId: user._id });
+
+//   const sessionData = createSession();
+
+//   const session = await Session.create({
+//     userId: user._id,
+//     ...sessionData,
+//   });
+
+//   console.log(session);
+//   return session;
+// };
+
 export const loginUser = async (payload) => {
   const user = await User.findOne({ email: payload.email });
-
-  if (!user) return createHttpError(404, "User not found");
+  if (!user) throw createHttpError(404, "User not found");
 
   const isEqual = await bcrypt.compare(payload.password, user.password);
-
-  if (!isEqual) return createHttpError(401, "Unauthorized");
+  if (!isEqual) throw createHttpError(401, "Unauthorized");
 
   await Session.deleteOne({ userId: user._id });
 
   const sessionData = createSession();
 
-  return await Session.create({
+  const session = await Session.create({
     userId: user._id,
     ...sessionData,
   });
+
+  console.log("Session after DB create:", session);
+  console.log("Payload password:", payload.password);
+  console.log("User hashed password:", user.password);
+  console.log("Password match result:", isEqual);
+
+  return session.toObject();
 };
 
 export const LogoutUser = async (sessionId) => {
